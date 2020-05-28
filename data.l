@@ -4,10 +4,10 @@
 #include <string.h>
 
 char *date;
-char *month;
-int i=0;
-int day,year,mnth;
-int zla_wpisana=1;
+int slowo=0;
+int zla_wpisana=0;
+char *uciety_wzorzec[3];
+char *separator="-./";
 
 char *months[12] = {
 	"styczen",
@@ -38,37 +38,28 @@ zla_data ^(.)
 {data} {
 	
 	date = yytext;  
-	char *array[3];
-	char *separator="-./";
     char *p = strtok (date, separator);
     while (p != NULL){
-        array[i++] = p;
+        uciety_wzorzec[slowo++] = p;
         p = strtok (NULL, separator);
     }
-
-    day=atoi(array[0]);
-    year=atoi(array[2]);
-    year=year%100;
 	
-	if(strlen(array[1]) <= 2){
-		mnth=atoi(array[1]);
-		printf("Poprawny format: %.2d-%s-%.2d\n",day,months[mnth-1],year);
-        }	
-	else{
-		printf("Poprawny format: %.2d-%s-%.2d\n",day,array[1],year);
-	} 
+	if(strlen(uciety_wzorzec[1]) < 3)
+		printf("Poprawny format: %.2d-%s-%.2d\n",atoi(uciety_wzorzec[0]),months[atoi(uciety_wzorzec[1])-1],atoi(uciety_wzorzec[2])%100);
+	else
+		printf("Poprawny format: %.2d-%s-%.2d\n",atoi(uciety_wzorzec[0]),uciety_wzorzec[1],atoi(uciety_wzorzec[2])%100);
 	
-	i=0;
+	slowo=0;
 		
 }
 
 {zla_data} {	
-	if(zla_wpisana)
+	if(!zla_wpisana)
 	{
-		zla_wpisana=0;
+		zla_wpisana=1;
 		printf("Podaj prawidlowa date\n");
 	}
-	zla_wpisana=1;
+	zla_wpisana=0;
 }
 			
 .|\n  /*niewypisywanie nieprawidlowych znakow*/
